@@ -1,2 +1,0 @@
-# TycoonTown
-Board game
