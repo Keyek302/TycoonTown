@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="theme-color" content="#2b1055">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tycoon Town">
+<meta name="description" content="Tycoon Town: a family-friendly property trading board game for kids and grown-ups.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<title>Tycoon Town</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#fff6df;--fg:#222;--card:#fff;--line:#d9c9a3;--acc:#e8453c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1d1b26;--fg:#f2f2f2;--card:#2a2738;--line:#555}}
+:root[data-theme="dark"]{--bg:#1d1b26;--fg:#f2f2f2;--card:#2a2738;--line:#555}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px system-ui,sans-serif;max-width:560px;margin:0 auto;padding:8px}
+h1{font-size:22px;margin:6px 0;text-align:center}
+button{font:inherit;border:0;border-radius:12px;padding:12px 16px;background:var(--acc);color:#fff;font-weight:700;margin:3px}
+button.alt{background:#4a7bd6}button.off{opacity:.4}
+button.tok{background:var(--card);color:var(--fg);border:3px solid var(--line);font-size:26px;padding:6px 10px}
+button.tok.sel{border-color:var(--acc)}
+input{font:inherit;padding:10px;border-radius:10px;border:2px solid var(--line);background:var(--card);color:var(--fg);width:100%;margin:4px 0}
+.card{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:10px;margin:8px 0}
+#board{display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(6,1fr);gap:2px;aspect-ratio:1}
+.t{background:var(--card);border:1px solid var(--line);border-radius:6px;font-size:9px;line-height:1.1;text-align:center;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start}
+.t .s{height:8px}.t .nm{padding:1px;flex:1}.t .ic{font-size:20px;margin-top:6px}
+.t .tk{position:absolute;bottom:0;left:0;right:0;font-size:15px;line-height:1}
+.t .ow{position:absolute;top:0;right:0;width:10px;height:10px;border-radius:0 5px 0 8px}
+#mid{grid-area:2/2/6/6;background:var(--card);border-radius:12px;padding:6px;text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center;overflow:auto}
+#mid .big{font-size:34px}#mid small{font-size:12px;opacity:.8}
+.pl{display:flex;justify-content:space-between;padding:5px 2px}.pl.me{font-weight:800;color:var(--acc)}
+.row{display:flex;flex-wrap:wrap;align-items:center}
+.sub{text-align:center;margin:0 0 8px;opacity:.7}
+.card h2{font-size:14px;margin:0 0 8px;text-transform:uppercase;letter-spacing:.6px;opacity:.7}
+.pc{display:flex;align-items:center;gap:10px;padding:8px;border:2px solid var(--line);border-radius:12px;margin:6px 0}
+.pe{font-size:30px}.pn{flex:1;font-weight:700;display:flex;flex-direction:column}.pn small{font-weight:400;opacity:.7}
+.x{background:none;color:var(--fg);padding:6px 10px;opacity:.6;margin:0}
+.tr{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.tr button{font-size:26px;padding:6px 10px;margin:0;background:var(--bg);color:var(--fg);border:3px solid transparent}.tr button.on,.seg button.on{border-color:var(--acc)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}.seg button{margin:0;background:var(--bg);color:var(--fg);border:3px solid transparent;display:flex;flex-direction:column;gap:2px;text-align:left}.seg small{font-weight:400;font-size:12px;opacity:.75}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:6px}.two button{margin:0}
+.go{width:100%;font-size:20px;padding:16px;margin:6px 0}
+summary{font-weight:700;cursor:pointer}
+.menu{position:fixed;inset:0;z-index:9;overflow:hidden;background:linear-gradient(160deg,#2b1055,#7b2cbf 40%,#ff5d8f 75%,#ffb347);background-size:200% 200%;animation:bg 12s ease infinite;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:env(safe-area-inset-top,0px) 16px env(safe-area-inset-bottom,0px);color:#fff}
+@keyframes bg{50%{background-position:100% 100%}}
+.fl{position:absolute;bottom:-60px;left:var(--x);font-size:var(--s);animation:up var(--d) linear infinite;animation-delay:var(--w);opacity:.85}
+@keyframes up{to{transform:translateY(-115vh) rotate(360deg)}}
+.sky{position:absolute;bottom:0;left:0;width:100%;height:30%}
+.wn{animation:tw 3s ease-in-out infinite}@keyframes tw{50%{opacity:.25}}
+.logo{font-size:72px;z-index:2;animation:bob 2s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-10px) rotate(8deg)}}
+.ttl{font-size:clamp(40px,13vw,64px);font-weight:900;line-height:.95;text-align:center;z-index:2;text-shadow:0 4px 0 #0004,0 0 24px #ffd16680;letter-spacing:1px}
+.ttl span{display:block;font-size:.45em;letter-spacing:6px;color:#ffe08a}
+.mb{width:min(300px,80vw);font-size:22px;padding:16px;margin:8px 0;background:#fff;color:#4a1a8c;box-shadow:0 5px 0 #0003;border-radius:18px;position:relative;z-index:2}
+.mb.p{background:#ffd23f;color:#3a1d00}.mb:active{transform:translateY(3px);box-shadow:0 2px 0 #0003}
+.how{position:relative;z-index:2;background:#0007;border-radius:14px;padding:10px 14px;margin:8px;max-width:320px;font-size:14px;line-height:1.6}
+#stage{--s:min(66vw,400px);position:relative;width:100%;height:calc(var(--s)*.98);perspective:1500px;margin:6px 0}
+#iso{position:absolute;left:50%;top:50%;width:var(--s);height:var(--s);margin:calc(var(--s)*-.5) 0 0 calc(var(--s)*-.5);transform:rotateX(58deg) rotateZ(45deg)}
+#iso,.tk,.tl,.ctr{transform-style:preserve-3d}
+.ctr{position:absolute;left:11.11%;top:11.11%;width:77.78%;height:77.78%;border-radius:14px;background:radial-gradient(#8fe09a,#3fa35b);box-shadow:3px 3px 0 #0003}
+.ctr i{position:absolute;font-style:normal;font-size:30px;transform-origin:50% 100%;transform:translate(-50%,-100%) rotateZ(-45deg) rotateX(-58deg)}
+.tl{position:absolute;width:11.11%;height:11.11%;border:2px solid #0003;border-radius:6px;background:linear-gradient(135deg,color-mix(in srgb,var(--c) 65%,#fff),var(--c));box-shadow:2px 2px 0 #0004,4px 4px 0 #0003,6px 6px 0 #0002}
+.tl u{position:absolute;left:50%;top:50%;text-decoration:none;font-size:11px;font-weight:800;color:#fff;text-shadow:0 1px 2px #000;white-space:nowrap;transform-origin:50% 100%;transform:translate(-50%,-50%) rotateZ(-45deg) rotateX(-58deg)}
+.tl u.i{font-size:17px;color:#000;text-shadow:none}
+.tk{position:absolute;width:0;height:0;transition:left .3s linear,top .3s linear;margin-left:calc(var(--k)*8px - 12px);margin-top:calc(var(--k)*4px - 6px)}
+.tk span{position:absolute;left:0;top:0;font-size:21px;line-height:1;transform-origin:50% 100%;transform:translate(-50%,-100%) rotateZ(-45deg) rotateX(-58deg);filter:drop-shadow(0 4px 2px #0006)}
+.tk b{display:block;font-weight:400}.hp{animation:hop .3s ease-in-out infinite}
+@keyframes hop{50%{transform:translateY(-16px)}}
+#hud{text-align:center}.hrow{display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left}.hrow .big{font-size:38px}.dice{font-size:40px;min-width:80px;text-align:center}
+.dice.sh{animation:shk .25s linear infinite}@keyframes shk{25%{transform:rotate(-12deg) translateY(-4px)}75%{transform:rotate(12deg)}}
+#iso{transition:transform .4s ease}
+.zb{position:absolute;top:0;right:0;z-index:5;display:flex;flex-direction:column}.zb button{margin:2px;padding:6px 9px;font-size:14px;background:#0008;color:#fff;border-radius:10px}
+.mrow{display:flex;flex-wrap:wrap;justify-content:center;margin-top:4px}.mrow .card{flex:1 1 100%;margin:6px 0}
+.tc{font-size:12px;padding:6px 8px;margin:2px;background:var(--bg);color:var(--fg);border:2px solid var(--line)}.tc.on,.tr button.on{border-color:var(--acc)}
+@media(prefers-reduced-motion:reduce){.fl,.logo,.menu,.wn,.hp,.dice.sh{animation:none}}
+body{font-family:"Fredoka",ui-rounded,"Trebuchet MS",system-ui,sans-serif;background:linear-gradient(180deg,#ffe3ef,#dff1ff 60%,#fff6d9);min-height:100vh}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) body{background:linear-gradient(#251a3d,#1d1b26)}}
+button{font-family:inherit;font-size:17px;border-radius:18px;padding:12px 18px;background:linear-gradient(#ff8a5c,#ef4b3f);box-shadow:0 5px 0 #b3261e,0 8px 10px #0003;text-shadow:0 1px 0 #0003;transition:transform .08s,box-shadow .08s}
+button:active{transform:translateY(4px);box-shadow:0 1px 0 #b3261e}
+button.alt{background:linear-gradient(#5fb0ff,#2f7de1);box-shadow:0 5px 0 #1b56a8,0 8px 10px #0003}button.alt:active{box-shadow:0 1px 0 #1b56a8}
+button.good{background:linear-gradient(#6fdc8c,#2e9e4f);box-shadow:0 5px 0 #1f7a3a,0 8px 10px #0003}button.good:active{box-shadow:0 1px 0 #1f7a3a}
+.tr button,.seg button,.tc,.x,.zb button{box-shadow:none;text-shadow:none}
+input{border-radius:16px;font-size:18px;padding:12px;border:3px solid var(--line)}
+.card{border:0;border-radius:22px;box-shadow:0 4px 0 #0001,0 6px 14px #0001}
+.pc{border-radius:18px;background:#f4f9ff;border-color:#cfe4ff;color:#223}
+#hud{border-radius:24px;box-shadow:0 6px 0 #0002;padding:14px}
+#hud>div>button{font-size:24px;padding:16px 28px}
+#hud>small{display:block;margin:10px 0;font-size:15px;font-weight:600}
+.hrow .big{width:64px;height:64px;display:grid;place-items:center;background:#fff;border-radius:50%;box-shadow:0 3px 0 #0002,inset 0 0 0 4px #ffd23f;font-size:34px}
+.hrow small{display:inline-block;background:#ffe27a;color:#5a3b00;padding:2px 12px;border-radius:999px;font-weight:700;font-size:15px}
+#hud>.card{background:#fff6d6;color:#3a2a00;border:3px dashed #f5b942;box-shadow:none;margin:8px 0}
+.mrow>button{font-size:16px;padding:10px 16px;margin:5px}
+.mrow .card{background:#fffbea;color:#3a2a00;border:3px solid #ffd666;border-radius:22px;padding:12px;box-shadow:0 4px 0 #f0c14b}
+.mrow .card .pl{background:#fff;border-radius:16px;padding:8px 12px;margin:6px 0;box-shadow:0 2px 0 #0001;font-weight:600;align-items:center}
+.mrow .card .pl button{padding:8px 12px;font-size:15px;margin:0 0 0 6px}
+.mrow .card small{display:block;font-weight:700;margin-top:8px;color:#8a5a00}
+.mrow .card .pl small{display:inline;margin:0}
+.mrow .card .tc{font-size:14px;border-radius:999px;padding:8px 14px;border:3px solid #ffd666;background:#fff;color:#3a2a00}
+.mrow .card .tc.on{background:#4cc36b;border-color:#2e9e4f;color:#fff}.mrow .card .tc.on::before{content:"✓ "}
+.mrow .card .tr button{font-size:30px;padding:6px 12px;border:3px solid #ffd666;background:#fff;border-radius:18px}
+.mrow .card .tr button.on{border-color:#2e9e4f;background:#d9f7e1}
+.mrow .card .row b{min-width:64px;text-align:center;font-size:22px}
+.fl2{position:absolute;z-index:6;pointer-events:none;font-weight:800;font-size:20px;transform:translateX(-50%);animation:rise 1.3s ease-out forwards;text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 3px #fff}
+.fl2.up{color:#1f9d3a}.fl2.dn{color:#e03a3a}
+@keyframes rise{from{opacity:1;margin-top:0}to{opacity:0;margin-top:-64px}}
+@keyframes pop{0%{scale:0}60%{scale:1.9}100%{scale:1}}
+@keyframes flash{50%{filter:brightness(1.9) saturate(1.5)}}
+.cf{position:fixed;top:-40px;z-index:30;pointer-events:none;animation:fall 3s linear forwards}@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+.xb{position:absolute;top:0;left:0;z-index:5;margin:2px;padding:6px 10px;font-size:14px;background:#0008;color:#fff;border-radius:10px;box-shadow:none;text-shadow:none}
+.ovl{position:fixed;inset:0;z-index:40;background:#0008;display:flex;align-items:center;justify-content:center;padding:20px}.ovl .card{text-align:center;max-width:320px;padding:18px}
+
+html{overscroll-behavior:none}body{-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;overscroll-behavior:none}
+input{-webkit-user-select:text;user-select:text}button,input{touch-action:manipulation}
+#app:not([data-g="1"]){max-width:620px;margin:0 auto}
+@media(min-width:600px){body{max-width:720px}#stage{--s:min(64vw,500px)}}
+@media(min-width:900px){
+ body{max-width:1120px}
+ #app[data-g="1"]{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(320px,1fr);gap:16px;align-items:start}
+ #app[data-g="1"] #stage{grid-row:1 / span 3;--s:min(62vh,40vw,620px)}
+ #app[data-g="1"] #hud,#app[data-g="1"] #pls{grid-column:2}
+}
+</style></head><body>
+<h1>🎲 Tycoon Town</h1>
+<div id="app"></div>
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script>
+const G=[["brown","#8b5a2b",60],["lblue","#6ec6f0",100],["pink","#f06eb4",140],["orange","#f59a23",180],["red","#e03a3a",220],["yellow","#f2d21b",260],["green","#2e9e4f",300],["blue","#2a4fc4",350]];
+const N={1:"Mud Lane",2:"Pebble St",6:"Pond Way",7:"Rain Rd",9:"Candy Ave",11:"Cupcake Ln",13:"Sunset Blvd",14:"Tiger Trail",17:"Fire Rd",18:"Dino Dr",21:"Sunny Sq",22:"Banana Blvd",25:"Park Pl",26:"Forest Way",30:"Castle Ct",31:"Rocket Rd"};
+const GI={1:0,2:0,6:1,7:1,9:2,11:2,13:3,14:3,17:4,18:4,21:5,22:5,25:6,26:6,30:7,31:7};
+const RR={4:"Red Line",12:"Blue Line",20:"Green Line",28:"Gold Line"},UT={10:["Electric Co.","💡"],23:["Water Works","🚰"]},TX={5:["Income Tax",200],29:["Luxury Tax",100]},CC={3:1,19:1},NT=32;
+const T=[];for(let i=0;i<NT;i++){const g=GI[i];T.push(g!==undefined?{t:"prop",g,c:G[g][1],p:G[g][2],n:N[i]}:RR[i]?{t:"rr",p:200,n:RR[i],c:"#9fb3c8",ic:"🚂"}:UT[i]?{t:"ut",p:150,n:UT[i][0],c:"#b8c4d6",ic:UT[i][1]}:TX[i]?{t:"tax",n:TX[i][0],a:TX[i][1]}:CC[i]?{t:"cc"}:{t:{0:"go",8:"jail",16:"park",24:"gtj"}[i]||"chance"})}
+const IC={go:"🏁",jail:"🚧",park:"🅿️",gtj:"👮",chance:"❓",rr:"🚂",ut:"💡",tax:"💰",cc:'<svg viewBox="0 0 24 24" width="19" height="19"><path d="M3 11a9 9 0 0 1 18 0v2H3z" fill="#a0642d"/><rect x="3" y="12" width="18" height="9" rx="1.5" fill="#7a4a1e"/><rect x="6" y="4" width="1.8" height="17" fill="#f5c542"/><rect x="16.2" y="4" width="1.8" height="17" fill="#f5c542"/><rect x="3" y="11" width="18" height="2.4" fill="#f5c542"/><rect x="10.2" y="10" width="3.6" height="6" rx=".8" fill="#ffd966" stroke="#8a5a00" stroke-width=".6"/><circle cx="12" cy="13" r=".9" fill="#5a3b00"/></svg>'};
+const TOK=["🐶","🐱","🦖","🚀","🦄","🐸"];
+const pos=i=>i<=8?[8,8-i]:i<=16?[16-i,0]:i<=24?[0,i-16]:[i-24,8];
+const myId=Math.random().toString(36).slice(2,8);
+let S={players:[],own:{},h:{},mg:{},tr:null,turn:0,phase:"menu",log:"Welcome!",dice:[0,0],win:null},room=null,host=true,code="",draft={e:TOK[0],mode:"kid",name:""};
+const $=id=>document.getElementById(id);
+const cur=()=>S.players[S.turn];
+const mine=()=>cur()&&cur().by===myId&&!cur().cpu;
+const fm=(p,v)=>p.mode==="kid"?"🪙"+Math.round(v/10):"$"+v;
+function sync(){render();try{if(S.phase!=="menu"&&S.phase!=="lobby")localStorage.setItem("tt3",JSON.stringify(S))}catch(e){}if(room)room.emit("state",S).catch(()=>{})}
+function log(m){S.log=m}
+function rent(i){const o=S.own[i],t=T[i];if(t.t==="ut")return(S.dice[0]+S.dice[1])*(T.filter((x,k)=>x.t==="ut"&&S.own[k]===o).length>1?10:4);if(t.t==="rr")return 25*2**(T.filter((x,k)=>x.t==="rr"&&S.own[k]===o).length-1);
+ const h=S.h[i]||0,b=t.p/10;return h?b*[0,5,15,40,60,80][h]:T.every((x,k)=>x.g!==t.g||S.own[k]===o)?b*2:b}
+function broke(p,f){if(p.m>=0)return;if(p.mode==="kid"){p.m=100;log("The bank gave "+p.n+" some coins!")}else if(!f&&worth(p)+p.m>=0){S.phase="debt";log(p.n+" owes money! Sell or mortgage to pay.")}else{p.out=true;const k=S.players.indexOf(p);for(const i in S.own)if(S.own[i]===k){delete S.own[i];delete S.h[i];delete S.mg[i]}log(p.n+" is out of money!");const l=S.players.filter(x=>!x.out);if(l.length===1)S.win=l[0].n}}
+function cc(p){const r=Math.random()*5|0;
+ if(r===0){p.m+=150;log("🪙 You sold a lemonade stand! +150")}
+ else if(r===1){S.players.forEach(q=>{if(q!==p&&!q.out){q.m-=20;p.m+=20}});log("🪙 Birthday! Everyone gives you 20")}
+ else if(r===2){if(p.mode==="kid"){p.m+=50;log("🪙 Found a lucky coin! +50")}else{p.m-=75;log("🪙 School fee: -75");broke(p)}}
+ else if(r===3){p.m+=50;log("🪙 Bank error in your favor! +50")}
+ else{p.goj=(p.goj||0)+1;log("🪙 You got a Get Out of Timeout Free card! 🎟️")}}
+function roll(){S.phase="rolling";sync();setTimeout(roll2,800)}
+function roll2(){const a=1+Math.random()*6|0,b=1+Math.random()*6|0,p=cur();S.dice=[a,b];S.dbl=a===b&&!p.jail;S.dc=S.dbl?(S.dc||0)+1:0;if(S.dc>=3){S.dbl=false;S.dc=0;p.pos=8;p.jail=1;log(p.n+" rolled 3 doubles: timeout!");S.phase="end";return sync()}
+ if(p.jail){if(a===b||p.jail>=3){p.jail=0;log(p.n+" got out of timeout!")}else{p.jail++;S.phase="end";log(p.n+" is still in timeout");return sync()}}
+ move(p,a+b)}
+function move(p,n){S.phase="moving";if(n<=0)return land(p);p.pos=(p.pos+1)%NT;if(p.pos===0){p.m+=200;log(p.n+" passed GO! +200")}sync();setTimeout(()=>move(p,n-1),320)}
+function land(p){const i=p.pos,t=T[i];S.phase="end";log(p.n+" landed on "+(t.n||t.t));
+ if(t.t==="prop"||t.t==="rr"||t.t==="ut"){const o=S.own[i];if(o===undefined)S.phase="buy";else if(o!==S.turn&&!S.mg[i]){let r=rent(i);if(p.mode==="kid")r=r/2;p.m-=r;S.players[o].m+=r;log(p.n+" paid "+fm(p,r)+" rent to "+S.players[o].n);broke(p)}}
+ else if(t.t==="tax"){const a=p.mode==="kid"?t.a/2:t.a;p.m-=a;log(p.n+" paid "+t.n+" "+fm(p,a));broke(p)}
+ else if(t.t==="cc"){cc(p)}
+ else if(t.t==="gtj"){p.pos=8;p.jail=1;log(p.n+" goes to timeout!")}
+ else if(t.t==="park"){p.m+=50;log(p.n+" found 50 at the park!")}
+ else if(t.t==="chance"){const r=Math.random()*5|0;
+  if(r===0){p.m+=100;log("❓ Found treasure! +100")}
+  else if(r===1){if(p.mode==="kid"){p.m+=50;log("❓ Ice cream day! +50")}else{p.m-=50;log("❓ Repair bill! -50");broke(p)}}
+  else if(r===2){p.pos=0;p.m+=200;log("❓ Zoom to GO! +200")}
+  else if(r===3){log("❓ Hop forward 3!");return move(p,3)}
+  else{p.goj=(p.goj||0)+1;log("❓ You got a Get Out of Timeout Free card! 🎟️")}}
+ sync()}
+function buy(){const p=cur(),i=p.pos,c=T[i].p;if(p.m>=c){p.m-=c;S.own[i]=S.turn;log(p.n+" bought "+T[i].n+"!")}S.phase="end";sync()}
+function skip(){auc()}
+function next(){if(S.win)return;S.dbl=false;S.dc=0;do{S.turn=(S.turn+1)%S.players.length}while(cur().out);S.phase="roll";S.dice=[0,0];sync()}
+function render(){const a=$("app");document.querySelector("h1").style.display=S.phase==="menu"?"none":"";if(S.phase==="menu"||S.phase==="lobby"){a.dataset.g="";pv=null}if(S.phase==="menu")return menu(a);if(S.phase==="lobby")return lobby(a);return game(a);
+ let h='<div id="board">';
+ for(let i=0;i<20;i++){const [r,c]=pos(i),t=T[i],tk=S.players.filter(p=>p.pos===i&&!p.out).map(p=>p.e).join(""),o=S.own[i];
+  h+=`<div class="t" style="grid-area:${r+1}/${c+1}">${t.t==="prop"?`<div class="s" style="background:${t.c}"></div><div class="nm">${t.n}<br>${S.players[S.turn]?fm(cur(),t.p):""}</div>`:`<div class="ic">${IC[t.t]}</div>`}${o!==undefined?`<div class="ow" style="background:#${["e03a3a","2a4fc4","2e9e4f","f59a23","a040d0","444"][o]}"></div>`:""}<div class="tk">${tk}</div></div>`}
+ const p=cur(),[d1,d2]=S.dice;
+ h+=`<div id="mid">${S.win?`<div class="big">🏆</div><b>${S.win} wins!</b>`:`<div class="big">${p.e}</div><b>${p.n}</b><small>${fm(p,p.m)}${p.jail?" · timeout":""}</small>${d1?`<div class="big">🎲 ${d1} + ${d2}</div>`:""}<small>${S.log}</small>${mine()?btns():`<small>Waiting for ${p.n}…</small>`}`}</div></div>`;
+ h+='<div class="card">'+S.players.map((q,k)=>`<div class="pl ${q.by===myId?"me":""}"><span>${q.e} ${q.n} ${q.mode==="kid"?"🧒":"🎩"}${q.out?" ❌":""}${k===S.turn?" ◀":""}</span><span>${fm(q,q.m)}</span></div>`).join("")+"</div>";
+ if(code)h+=`<div class="card"><small>Room code: <b>${code}</b></small></div>`;
+ a.innerHTML=h;cpu()}
+const OC=["#e03a3a","#2a4fc4","#2e9e4f","#f59a23","#a040d0","#444"];
+function skel(){let b='<div id="stage"><button class="xb" onclick="askQuit()">🏠 Exit</button><div class="zb"><button onclick="zoom(.5)">🔍+</button><button onclick="zoom(-.5)">🔍−</button><button onclick="draft.px=draft.py=0;cam()">🎯</button><button id="mb" onclick="tmute()">${mute?"🔇":"🔊"}</button></div><div id="iso"><div class="ctr">'+["🌳|10|30","🏢|62|28","⛲|34|62","🏙️|70|80","🌲|14|88"].map(s=>{const[e,x,y]=s.split("|");return`<i style="left:${x}%;top:${y}%">${e}</i>`}).join("")+'</div>';
+ for(let i=0;i<NT;i++){const [r,c]=pos(i),t=T[i];b+=`<div id="t${i}" class="tl" style="left:${c*100/9}%;top:${r*100/9}%;--c:${t.c||"#f4e7c5"}"><u class="${t.t==="prop"?"":"i"}">${t.t==="prop"?"":t.ic||IC[t.t]}</u></div>`}
+ S.players.forEach((q,k)=>{b+=`<div id="k${k}" class="tk" style="--k:${k}"><span><b>${q.e}</b></span></div>`});
+ return b+'</div></div><div id="hud" class="card"></div><div id="pls"></div>'}
+function hud(){const p=cur(),[d1,d2]=S.dice,F="⚀⚁⚂⚃⚄⚅";
+ if(S.win)return`<div class="big" style="font-size:44px">🏆</div><b>${esc(S.win)} wins!</b><div><button class="good" onclick="replay()">🔁 Play again</button><button class="alt" onclick="toMenu()">🏠 Menu</button></div>`;
+ return`<div class="hrow"><span class="big">${p.e}</span><span style="flex:1"><b>${esc(p.n)}</b><br><small>${fm(p,p.m)}${p.jail?" · timeout":""}</small></span><span class="dice ${S.phase==="rolling"?"sh":""}">${S.phase==="rolling"?"🎲🎲":d1?F[d1-1]+F[d2-1]:""}</span></div><small>${esc(S.log)}</small>${trbox()}${aubox()}<div>${S.tr||S.au?"":mine()?btns()+'<div class="mrow">'+bld()+mng()+trd()+'</div>':`<small>${esc(p.n)} is playing…</small>`}</div>`}
+function plist(){return'<div class="card">'+S.players.map((q,k)=>`<div class="pl ${q.by===myId?"me":""}"><span>${q.e} ${esc(q.n)} ${q.mode==="kid"?"🧒":"🎩"}${q.goj?" 🎟️"+q.goj:""}${q.out?" ❌":""}${k===S.turn?" ◀":""}</span><span>${fm(q,q.m)}</span></div>`).join("")+"</div>"+(code?`<div class="card"><small>Room code: <b>${code.toUpperCase()}</b></small></div>`:"")}
+let pdr=null;
+function pinit(st){st.addEventListener("pointerdown",e=>{if((draft.z||1)>1&&!e.target.closest(".zb")){pdr={x:e.clientX-(draft.px||0),y:e.clientY-(draft.py||0)};st.setPointerCapture(e.pointerId)}});
+ st.addEventListener("pointermove",e=>{if(pdr){draft.px=e.clientX-pdr.x;draft.py=e.clientY-pdr.y;cam(1)}});
+ const up=()=>{pdr=null};st.addEventListener("pointerup",up);st.addEventListener("pointercancel",up)}
+function zoom(d){draft.z=Math.min(2.5,Math.max(1,(draft.z||1)+d));try{localStorage.setItem("ttz",draft.z)}catch(e){}cam()}
+function cam(d){const z=draft.z||1,i=$("iso"),st=$("stage");if(!i)return;let tx=0,ty=0;if(draft.lt!==S.turn||z===1){draft.lt=S.turn;draft.px=draft.py=0}if(z>1){const [r,c]=pos(cur().pos),s=i.offsetWidth,u=((c+.5)/9-.5)*s,v=((r+.5)/9-.5)*s;tx=-z*(u-v)/Math.SQRT2;ty=-z*(u+v)/Math.SQRT2*.53;const L=z*s*.6;draft.px=Math.max(-L,Math.min(L,draft.px||0));draft.py=Math.max(-L,Math.min(L,draft.py||0));tx+=draft.px;ty+=draft.py}
+ st.style.overflow=z>1?"hidden":"";st.style.touchAction=z>1?"none":"";i.style.transition=d?"none":"";i.style.transform=`translate(${tx}px,${ty}px) rotateX(58deg) rotateZ(45deg) scale(${z})`}
+function game(a){if(draft.z===undefined){try{draft.z=+localStorage.getItem("ttz")||1}catch(e){draft.z=1}}if(!a.dataset.g){a.dataset.g="1";a.innerHTML=skel();pinit($("stage"))}
+ const p=cur();
+ for(let i=0;i<NT;i++){const el=$("t"+i),o=S.own[i];el.style.opacity=S.mg[i]?.45:1;el.style.outline=o!==undefined?`4px solid ${OC[o]}`:"";if(T[i].p){const u=el.firstChild,h=S.h[i]||0,pr=T[i].t==="prop";u.className=h||!pr?"i":"";u.textContent=!pr?T[i].ic:h===5?"🏨":h?"🏠"+h:""}}
+ S.players.forEach((q,k)=>{const el=$("k"+k);if(!el)return;const [r,c]=pos(q.pos);el.style.left=(c+.5)*100/9+"%";el.style.top=(r+.5)*100/9+"%";el.style.display=q.out?"none":"";el.firstChild.firstChild.className=S.phase==="moving"&&k===S.turn?"hp":""});
+ $("hud").innerHTML=hud();$("pls").innerHTML=plist();cam();cpu();cpuTr();cpuAu();sfx()}
+function btns(){const p=cur();if(S.phase==="rolling"||S.phase==="moving")return"";if(S.phase==="debt")return'<small>You owe money! Sell or mortgage:</small><button class="alt" onclick="giveUp()">🏳️ Give up</button>';if(S.phase==="roll")return'<button onclick="roll()">🎲 Roll!</button>'+(p.jail&&p.m>=50?'<button class="alt" onclick="payOut()">💸 Pay '+fm(p,50)+' to leave timeout</button>':"")+(p.jail&&p.goj?'<button class="good" onclick="useCard()">🎟️ Use free card</button>':"");
+ if(S.phase==="buy"){const c=T[p.pos].p,ok=p.m>=c;return`<button class="${ok?"":"off"}" onclick="buy()">${p.mode==="kid"?"Take it!":"Buy "+fm(p,c)}</button>`+(p.mode==="kid"?"":'<button class="alt" onclick="skip()">Skip</button>')}
+ return S.dbl&&!p.jail&&!p.out&&!S.win?'<button onclick="again()">🎲 Doubles! Roll again</button>':'<button class="alt" onclick="next()">Next player ▶</button>'}
+function again(){S.dbl=false;roll()}
+function payOut(){const p=cur();if(p.m<50)return;p.m-=50;p.jail=0;log(p.n+" paid to leave timeout!");sync()}
+function auc(){const i=cur().pos,ord=[];for(let k=1;k<=S.players.length;k++){const j=(S.turn+k)%S.players.length;if(!S.players[j].out)ord.push(j)}S.au={i,bid:0,hi:-1,ord,pa:[],t:0};S.phase="end";log("🔨 Auction for "+T[i].n+"!");sync()}
+function nextB(){const a=S.au,rem=a.ord.filter(x=>!a.pa.includes(x));
+ if(rem.length===0||(rem.length===1&&a.hi===rem[0])){if(a.hi>=0){const w=S.players[a.hi];w.m-=a.bid;S.own[a.i]=a.hi;log("🔨 "+w.n+" won "+T[a.i].n+" for "+fm(w,a.bid)+"!")}else log("🔨 Nobody bid on "+T[a.i].n);S.au=null;return sync()}
+ do{a.t=(a.t+1)%a.ord.length}while(a.pa.includes(a.ord[a.t]));sync()}
+function abid(d){const a=S.au,q=S.players[a.ord[a.t]];if(q.m<a.bid+d)return;a.bid+=d;a.hi=a.ord[a.t];nextB()}
+function apass(){const a=S.au;a.pa.push(a.ord[a.t]);nextB()}
+function aubox(){const a=S.au;if(!a)return"";const q=S.players[a.ord[a.t]],me=q.by===myId&&!q.cpu,top=a.hi<0?"no bids yet":fm(S.players[a.hi],a.bid)+" by "+esc(S.players[a.hi].n);
+ return`<div class="card"><b>🔨 Auction: ${T[a.i].n}</b><br><small>Top bid: ${top}</small><br>${q.e} <b>${esc(q.n)}</b> to bid${me?`<br><button onclick="abid(10)">+${fm(q,10)}</button><button onclick="abid(50)">+${fm(q,50)}</button><button class="alt" onclick="apass()">Pass</button>`:""}</div>`}
+let auT=0;
+function cpuAu(){clearTimeout(auT);const a=S.au;if(!a)return;const bi=a.ord[a.t],q=S.players[bi];if(!q.cpu||q.by!==myId)return;
+ auT=setTimeout(()=>{if(S.au!==a||a.ord[a.t]!==bi)return;if(q.m>=a.bid+10&&a.bid+10<=T[a.i].p&&a.hi!==bi)abid(10);else apass()},1200)}
+let ac=null,mute=false,pv=null;try{mute=localStorage.getItem("ttm")==="1"}catch(e){}
+addEventListener("pointerdown",e=>{if(!ac){try{ac=new(window.AudioContext||window.webkitAudioContext)()}catch(x){}}if(ac&&ac.resume)ac.resume();if(e.target.closest&&e.target.closest("button"))SFX.click()});
+function tn(f,d,t,v,at){if(mute||!ac)return;const o=ac.createOscillator(),g=ac.createGain(),s=ac.currentTime+(at||0);o.type=t||"sine";o.frequency.setValueAtTime(f,s);g.gain.setValueAtTime(v||.15,s);g.gain.exponentialRampToValueAtTime(.001,s+d);o.connect(g);g.connect(ac.destination);o.start(s);o.stop(s+d)}
+const SFX={hop:()=>tn(520+Math.random()*80,.08,"triangle"),roll:()=>{for(let k=0;k<6;k++)tn(180+Math.random()*200,.07,"square",.06,k*.1)},buy:()=>{tn(660,.1,"square",.1);tn(990,.25,"square",.1,.1)},pay:()=>{tn(300,.12,"sawtooth",.08);tn(220,.2,"sawtooth",.08,.1)},cash:()=>{tn(880,.1,"triangle");tn(1320,.2,"triangle",.15,.08)},card:()=>{tn(500,.1);tn(700,.1,"sine",.15,.1);tn(900,.15,"sine",.15,.2)},jail:()=>tn(150,.4,"sawtooth",.12),win:()=>[523,659,784,1047].forEach((f,k)=>tn(f,.3,"triangle",.18,k*.18)),click:()=>tn(700,.05,"sine",.08)};
+function tmute(){mute=!mute;try{localStorage.setItem("ttm",mute?"1":"0")}catch(e){}$("mb").textContent=mute?"🔇":"🔊"}
+function fx(p,c){const st=$("stage");if(!st)return;const sr=st.getBoundingClientRect();
+ c.m.forEach((m,k)=>{const d=m-p.m[k],el=$("k"+k);if(!d||!el)return;const r=el.firstChild.getBoundingClientRect(),f=document.createElement("div");f.className="fl2 "+(d>0?"up":"dn");f.textContent=(d>0?"+":"−")+fm(S.players[k],Math.abs(d));f.style.left=(r.left-sr.left+r.width/2)+"px";f.style.top=(r.top-sr.top)+"px";st.appendChild(f);setTimeout(()=>f.remove(),1400)});
+ for(let i=0;i<NT;i++){const t=$("t"+i);if(!t)continue;if((c.h[i]||0)>(p.h[i]||0)){const u=t.firstChild;u.style.animation="pop .6s";setTimeout(()=>u.style.animation="",700)}
+  if(c.own[i]!==undefined&&p.own[i]===undefined){t.style.animation="flash .8s";setTimeout(()=>t.style.animation="",900)}}
+ if(c.w&&!p.w)confetti()}
+function confetti(){const e=["🎉","🎊","⭐","🪙","✨","🏆"];for(let k=0;k<36;k++){const s=document.createElement("span");s.className="cf";s.textContent=e[k%6];s.style.left=Math.random()*100+"vw";s.style.animationDelay=Math.random()*1.2+"s";s.style.fontSize=18+Math.random()*20+"px";document.body.appendChild(s);setTimeout(()=>s.remove(),4500)}}
+function replay(){S.players.forEach(q=>{q.m=q.mode==="kid"?1000:1500;q.pos=0;q.jail=0;q.goj=0;q.out=false});S.own={};S.h={};S.mg={};S.tr=null;S.au=null;S.turn=0;S.phase="roll";S.dice=[0,0];S.dbl=false;S.dc=0;S.win=null;log("New game! Good luck!");sync()}
+function useCard(){const p=cur();if(!p.goj)return;p.goj--;p.jail=0;log(p.n+" used a Get Out of Timeout Free card!");sync()}
+function askQuit(){if($("qo"))return;const o=document.createElement("div");o.id="qo";o.className="ovl";o.innerHTML='<div class="card"><b style="font-size:20px">Quit to the main menu?</b><p>Your game is saved on this device, so you can continue it later.</p><button class="good" onclick="qo(0)">▶ Keep playing</button><button onclick="qo(1)">🏠 Quit</button></div>';document.body.appendChild(o)}
+function qo(q){const o=$("qo");if(o)o.remove();if(q)toMenu()}
+function toMenu(){if(peer){peer.destroy();peer=null}room=null;code="";host=true;S={players:[],own:{},h:{},mg:{},tr:null,turn:0,phase:"menu",log:"Welcome!",dice:[0,0],win:null};pv=null;render()}
+function sfx(){const c={m:S.players.map(q=>q.m),p:S.players.map(q=>q.pos),j:S.players.map(q=>q.jail|0),o:Object.keys(S.own).length,h:{...S.h},own:{...S.own},ph:S.phase,lg:S.log,w:!!S.win};
+ if(pv&&pv.m.length===c.m.length){
+  if(c.ph==="rolling"&&pv.ph!=="rolling")SFX.roll();
+  else if(c.p.some((x,k)=>x!==pv.p[k]))SFX.hop();
+  else if(c.j.some((x,k)=>x>0&&!pv.j[k]))SFX.jail();
+  else if(c.o>pv.o)SFX.buy();
+  else if(c.lg!==pv.lg&&/^(❓|🪙)/.test(c.lg))SFX.card();
+  else if(c.m.some((x,k)=>x<pv.m[k]))SFX.pay();
+  else if(c.m.some((x,k)=>x>pv.m[k]))SFX.cash();
+  if(c.w&&!pv.w)SFX.win();fx(pv,c)}
+ pv=c}
+function after(){if(S.phase==="debt"&&cur().m>=0)S.phase="end";sync()}
+function worth(p){const k=S.players.indexOf(p);let w=0;for(let i=0;i<NT;i++)if(S.own[i]===k){w+=(S.h[i]||0)*bc(i)/2;if(!S.mg[i])w+=T[i].p/2}return w}
+function grpH(i){return T[i].t==="prop"&&T.some((x,j)=>x.g===T[i].g&&(S.h[j]||0)>0)}
+function umc(i){return Math.ceil(T[i].p*.55/10)*10}
+function canSell(i){const n=S.h[i]||0;return n>0&&T.every((x,j)=>x.g!==T[i].g||(S.h[j]||0)<=n)}
+function sellh(i){if(!canSell(i)){log("Sell evenly across the set first!");return sync()}cur().m+=bc(i)/2;S.h[i]--;after()}
+function mort(i){if(S.mg[i]||grpH(i)){log("Sell the houses in this set first!");return sync()}cur().m+=T[i].p/2;S.mg[i]=1;after()}
+function unmort(i){const p=cur(),c=umc(i);if(p.m<c){log("Not enough money yet");return sync()}p.m-=c;delete S.mg[i];after()}
+function giveUp(){const p=cur();p.m=-1;S.phase="end";broke(p,true);sync()}
+function cpuDebt(){const k=S.turn,p=cur();for(let i=0;i<NT&&p.m<0;i++)while(S.own[i]===k&&canSell(i)&&p.m<0)sellh(i);for(let i=0;i<NT&&p.m<0;i++)if(S.own[i]===k&&!S.mg[i]&&!grpH(i))mort(i);if(p.m<0)giveUp();else{S.phase="end";sync()}}
+function mng(){const p=cur(),k=S.turn;if(p.mode!=="big"||!["roll","end","debt"].includes(S.phase))return"";const ow=[];for(let i=0;i<NT;i++)if(S.own[i]===k)ow.push(i);if(!ow.length)return"";
+ let h='<button class="alt" onclick="draft.m=!draft.m;render()">⚙️ Manage</button>';
+ if(draft.m||S.phase==="debt")h+='<div class="card" style="text-align:left">'+ow.map(i=>{const n=S.h[i]||0,m=S.mg[i],bs='style="margin:0 0 0 4px;padding:6px 8px"';return`<div class="pl"><span>${m?"🔒":""}${T[i].n}${n?" 🏠"+n:""}</span><span>${n?`<button ${bs} onclick="sellh(${i})">−🏠</button>`:""}${m?`<button ${bs} onclick="unmort(${i})">Pay ${fm(p,umc(i))}</button>`:!n&&!grpH(i)?`<button ${bs} onclick="mort(${i})">Mortgage +${fm(p,T[i].p/2)}</button>`:""}</span></div>`}).join("")+"</div>";return h}
+function trd(){if(S.phase!=="roll"&&S.phase!=="end")return"";return'<button class="alt" onclick="draft.tf=draft.tf?0:{to:-1,g:[],w:[],gc:0,wc:0};render()">🤝 Trade</button>'+tform()}
+function tg(a,i){const l=draft.tf[a],x=l.indexOf(i);x<0?l.push(i):l.splice(x,1);render()}
+function tc(k,d){draft.tf[k]=Math.max(0,draft.tf[k]+d);render()}
+function tform(){const f=draft.tf,k=S.turn;if(!f||S.tr)return"";const oth=S.players.map((q,i)=>i).filter(i=>i!==k&&!S.players[i].out);
+ const chip=(i,a)=>`<button class="tc ${f[a].includes(i)?"on":""}" onclick="tg('${a}',${i})">${T[i].n}</button>`,ok=i=>!T.some((x,j)=>x.g!==undefined&&x.g===T[i].g&&(S.h[j]||0)>0),cash=a=>`<div class="row"><button class="tc" onclick="tc('${a}',-50)">−</button><b>${f[a]}</b><button class="tc" onclick="tc('${a}',50)">+</button><small>cash</small></div>`;
+ let h='<div class="card" style="text-align:left"><b>🤝 Trade with</b><div class="tr">'+oth.map(i=>`<button class="${f.to===i?"on":""}" onclick="draft.tf.to=${i};draft.tf.w=[];render()">${S.players[i].e}</button>`).join("")+"</div>";
+ if(f.to>=0){const mp=[],tp=[];for(let i=0;i<NT;i++){if(!T[i].p||!ok(i))continue;if(S.own[i]===k)mp.push(i);if(S.own[i]===f.to)tp.push(i)}
+  h+=`<small>You give</small><div class="row">${mp.map(i=>chip(i,"g")).join("")||"<small>no properties</small>"}</div>${cash("gc")}<small>You get</small><div class="row">${tp.map(i=>chip(i,"w")).join("")||"<small>no properties</small>"}</div>${cash("wc")}<button class="good" onclick="send()">📨 Send offer</button>`}
+ return h+"</div>"}
+function send(){const f=draft.tf;if(f.to<0||!(f.g.length+f.w.length+f.gc+f.wc))return;S.tr={from:S.turn,to:f.to,g:f.g,w:f.w,gc:f.gc,wc:f.wc};draft.tf=0;sync()}
+function trbox(){const t=S.tr;if(!t)return"";const a=S.players[t.from],b=S.players[t.to],nm=l=>l.map(i=>T[i].n).join(", ")||"nothing";
+ const rcv=b.by===myId&&!b.cpu,snd=a.by===myId&&!a.cpu;
+ return`<div class="card" style="margin:6px 0">🤝 <b>${esc(a.n)}</b> gives ${nm(t.g)}${t.gc?" + "+fm(a,t.gc):""} for ${nm(t.w)}${t.wc?" + "+fm(a,t.wc):""}${rcv?'<br><button class="good" onclick="tans(1)">✅ Accept</button><button class="alt" onclick="tans(0)">Decline</button>':snd?'<br><small>Waiting…</small><button class="alt" onclick="tans(0)">Cancel</button>':""}</div>`}
+function tans(ok){const t=S.tr;if(!t)return;const a=S.players[t.from],b=S.players[t.to];
+ if(ok&&a.m>=t.gc&&b.m>=t.wc){t.g.forEach(i=>S.own[i]=t.to);t.w.forEach(i=>S.own[i]=t.from);a.m+=t.wc-t.gc;b.m+=t.gc-t.wc;log("🤝 Trade done: "+a.n+" & "+b.n)}else log(ok?"Not enough cash for that trade":b.n+" said no thanks");
+ S.tr=null;sync()}
+let trT=0;
+function cpuTr(){clearTimeout(trT);const t=S.tr;if(!t)return;const q=S.players[t.to];if(!q||!q.cpu||q.by!==myId)return;
+ trT=setTimeout(()=>{if(S.tr!==t)return;const pv=l=>l.reduce((s,i)=>s+T[i].p,0),gain=pv(t.g)+t.gc,loss=pv(t.w)+t.wc,set=t.g.some(i=>T[i].t==="prop"&&T.every((x,j)=>x.g!==T[i].g||S.own[j]===t.to||t.g.includes(j)));tans(gain>=loss*1.1||set&&gain>=loss*.8)},1500)}
+function bc(i){return Math.round(T[i].p/20)*10}
+function mono(i,k){return T[i].t==="prop"&&T.every((x,j)=>x.g!==T[i].g||S.own[j]===k)}
+function bld(){if(S.phase!=="roll"&&S.phase!=="end")return"";const p=cur(),k=S.turn,cand=[];for(let i=0;i<NT;i++)if(S.own[i]===k&&mono(i,k))cand.push(i);
+ if(!cand.length)return"";let h='<button class="alt" onclick="draft.b=!draft.b;render()">🏗️ Build</button>';
+ if(draft.b)h+='<div class="card" style="text-align:left">'+cand.map(i=>{const n=S.h[i]||0;return`<div class="pl"><span>${n===5?"🏨":"🏠".repeat(n)||"▫️"} ${T[i].n}</span>${n<5?`<button class="good" style="margin:0" onclick="build(${i})">+ ${n===4?"Hotel":"House"} ${fm(p,bc(i))}</button>`:"<small>Max</small>"}</div>`}).join("")+"</div>";return h}
+function build(i){const p=cur(),n=S.h[i]||0,c=bc(i),lo=Math.min(...T.map((x,j)=>x.g===T[i].g?(S.h[j]||0):9));
+ if(n>=5||p.m<c||n>lo){log(n>lo?"Build evenly across the set first!":"Not enough money yet");return sync()}
+ p.m-=c;S.h[i]=n+1;log(p.n+" built "+(n===4?"a hotel":"a house")+" on "+T[i].n+"!");sync()}
+function cpuBuild(q){for(let i=0;i<NT;i++)if(S.own[i]===S.turn&&mono(i,S.turn)&&q.m>bc(i)+300)build(i)}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>"&#"+c.charCodeAt(0)+";");
+function pick(k,v){draft[k]=v;render()}
+const FL=["🎲","🏠","🏨","🪙","💰","🎩","🚀","🦖","🦄","🐶","🐱","🎈"];
+const fl=FL.map((e,i)=>`<span class="fl" style="--x:${(i*8.7+3)%92}%;--s:${28+(i*11)%26}px;--d:${9+(i*5)%8}s;--w:-${(i*3)%9}s">${e}</span>`).join("");
+function sky(){let x=0,s="";const hs=[40,65,50,80,45,70,55,90,48,62];for(let i=0;x<400;i++){const w=34+(i*7)%18,h=hs[i%10];s+=`<rect x="${x}" y="${100-h}" width="${w-2}" height="${h}" fill="#1a0b3a"/>`;for(let y=100-h+8;y<92;y+=14)for(let k=4;k<w-8;k+=10)if((i+y+k)%3)s+=`<rect class="wn" style="animation-delay:${(y+k)%5}s" x="${x+k}" y="${y}" width="4" height="6" fill="#ffd23f"/>`;x+=w}return`<svg class="sky" viewBox="0 0 400 100" preserveAspectRatio="xMidYMax slice">${s}</svg>`}
+function sv(){try{const s=JSON.parse(localStorage.getItem("tt3"));return s&&s.phase!=="menu"&&s.phase!=="lobby"&&!s.win?s:null}catch(e){return null}}
+function resume(){const s=sv();if(!s)return;S=s;S.players.forEach(q=>q.by=myId);room=null;code="";host=true;if(S.phase==="rolling")S.phase="roll";if(S.phase==="moving")land(cur());else render()}
+function toLobby(o){draft.on=!!o;S.phase="lobby";render()}
+function menu(a){a.innerHTML=`<div class="menu">${fl}${sky()}<div class="logo">🎲</div><div class="ttl"><span>WELCOME TO</span>TYCOON TOWN</div><p style="z-index:2;margin:8px 0 14px;opacity:.9;text-align:center">Roll, buy, and build with the whole family!</p>${sv()?'<button class="mb p" onclick="resume()">⏯ Continue game</button>':""}<button class="mb ${sv()?"":"p"}" onclick="toLobby()">▶ ${sv()?"New game":"Play"}</button><button class="mb" onclick="toLobby(1)">🌐 Play online</button><button class="mb" onclick="draft.how=!draft.how;render()">❓ How to play</button>${draft.how?`<div class="how">🎲 Roll and move around the board<br>🏠 Buy properties and collect rent<br>🧒 Little kid mode: coins, no going broke<br>🎩 Classic mode: real money, last player standing wins</div>`:""}</div>`}
+function rmP(i){S.players.splice(i,1);sync()}
+function lobby(a){const ok=S.players.length>1;
+ a.innerHTML=`${room?"":`<button class="x" onclick="S.phase='menu';render()">← Menu</button>`}<p class="sub">Set up your game</p>
+ <div class="card"><h2>1 · Players</h2>${S.players.map((p,i)=>`<div class="pc"><span class="pe">${p.e}</span><span class="pn">${esc(p.n)}<small>${p.mode==="kid"?"🧒 Little kid":"🎩 Classic"}${p.cpu?" · CPU":p.by===myId?"":" · online"}</small></span>${host?`<button class="x" onclick="rmP(${i})">✕</button>`:""}</div>`).join("")||"<small>No players yet. Add some below.</small>"}</div>
+ <div class="card"><h2>2 · Add a player</h2><input value="${esc(draft.name)}" oninput="draft.name=this.value" placeholder="Name" maxlength="12">
+ <div class="tr">${TOK.map(t=>`<button class="${draft.e===t?"on":""}" onclick="pick('e','${t}')">${t}</button>`).join("")}</div>
+ <div class="seg"><button class="${draft.mode==="kid"?"on":""}" onclick="pick('mode','kid')"><b>🧒 Little kid</b><small>Coins, easy rent, never goes broke</small></button><button class="${draft.mode==="big"?"on":""}" onclick="pick('mode','big')"><b>🎩 Classic</b><small>Real money and bankruptcy</small></button></div>
+ <div class="two"><button onclick="addP()">➕ Add player</button><button class="alt" onclick="addCPU()">🤖 Add CPU</button></div></div>
+ <details class="card" ${code||draft.on||draft.err?"open":""}><summary>3 · Online options <small>(optional)</small></summary>
+ ${code?`<p>Share this code:<br><b style="font-size:28px;letter-spacing:3px">${code.toUpperCase()}</b></p>`:`<button class="alt" onclick="hostRoom()">Host a room</button>`}
+ ${draft.err?`<p style="color:#c62828;font-weight:700">${esc(draft.err)}</p>`:""}<input id="cd" placeholder="Or enter a room code" maxlength="5"><button class="alt" onclick="joinRoom()">Join room</button></details>
+ ${host?`<button class="go ${ok?"":"off"}" onclick="start()">▶ Start game</button><p class="sub">${ok?"Ready to play!":"Add at least 2 players"}</p>`:`<p class="sub">Waiting for the host to start…</p>`}`}
+function lobbyOld(a){const mp=S.players.filter(p=>p.by===myId);
+ a.innerHTML=`<div class="card"><b>Add a player</b><input id="nm" placeholder="Name" maxlength="12"><div class="row">${TOK.map(t=>`<button class="tok ${draft.e===t?"sel":""}" onclick="draft.e='${t}';render()">${t}</button>`).join("")}</div>
+ <div class="row"><button class="tok ${draft.mode==="kid"?"sel":""}" style="font-size:16px" onclick="draft.mode='kid';render()">🧒 Little kid</button><button class="tok ${draft.mode==="big"?"sel":""}" style="font-size:16px" onclick="draft.mode='big';render()">🎩 Classic</button></div>
+ <button onclick="addP()">➕ Add</button><button class="alt" onclick="addCPU()">🤖 Add CPU</button></div>
+ <div class="card"><b>Players</b>${S.players.map(p=>`<div class="pl"><span>${p.e} ${p.n} ${p.mode==="kid"?"🧒":"🎩"}</span><span>${p.by===myId?"this device":"online"}</span></div>`).join("")||"<small>None yet</small>"}</div>
+ <div class="card"><b>Play together online</b><div class="row"><button class="alt" onclick="hostRoom()">Host a room</button></div><input id="cd" placeholder="Room code to join" maxlength="5"><button class="alt" onclick="joinRoom()">Join</button>${code?`<div>Room code: <b style="font-size:24px">${code}</b></div>`:""}</div>
+ ${host?`<button class="${S.players.length>1?"":"off"}" onclick="start()">▶ Start game</button>`:"<small>Waiting for the host to start…</small>"}`}
+function addP(){const n=draft.name.trim()||"Player "+(S.players.length+1);draft.name="";const p={n,e:draft.e,mode:draft.mode,m:draft.mode==="kid"?1000:1500,pos:0,jail:0,by:myId};
+ if(host){S.players.push(p);sync()}else room.emit("join",p).catch(()=>{draft.err="Couldn’t send your player. Ask the host to give you edit (Contributor) access.";render()})}
+function addCPU(){const n=["Robo","Beep","Bolt","Pixel"][S.players.length%4],p={n:"🤖 "+n,e:TOK.find(t=>!S.players.some(q=>q.e===t))||TOK[0],mode:draft.mode,m:draft.mode==="kid"?1000:1500,pos:0,jail:0,by:myId,cpu:1};
+ if(host){S.players.push(p);sync()}else room.emit("join",p).catch(()=>{})}
+let cpuT=0;
+function cpu(){clearTimeout(cpuT);const p=cur();if(S.phase==="lobby"||S.phase==="rolling"||S.phase==="moving"||S.win||!p||!p.cpu||p.by!==myId)return;const t=S.turn,ph=S.phase;
+ cpuT=setTimeout(()=>{if(S.turn!==t||S.phase!==ph||S.win||S.au)return;const q=cur();
+  if(ph==="debt")return cpuDebt();
+  if(ph==="roll"||ph==="end")cpuBuild(q);
+  if(ph==="roll"&&q.jail&&q.goj)useCard();
+  if(ph==="roll"&&q.jail&&q.m>500)payOut();
+  if(ph==="roll")roll();
+  else if(ph==="buy"){if(q.m>=T[q.pos].p+(q.mode==="kid"?0:200))buy();else skip()}
+  else if(S.dbl&&!q.jail&&!q.out)again();else next()},1000)}
+function start(){if(S.players.length<2)return;S.phase="roll";S.turn=0;sync()}
+let peer=null,conns=[],hostConn=null,hd={};
+const rm={emit(t,d){const m={t,d};try{if(host)conns.forEach(c=>c.open&&c.send(m));else if(hostConn&&hostConn.open)hostConn.send(m);else return Promise.reject(new Error("offline"));return Promise.resolve()}catch(e){return Promise.reject(e)}},on(t,f){hd[t]=f}};
+function got(m,from){if(!m||!m.t)return;if(host&&m.t==="state")conns.forEach(c=>c!==from&&c.open&&c.send(m));const f=hd[m.t];if(f)f({data:m.d,isMe:false})}
+function conn(c,h){draft.err="";if(typeof Peer==="undefined"){draft.err="Online play couldn\u2019t load. Check your internet connection and reload the page.";return render()}
+ if(peer){peer.destroy();peer=null}conns=[];hostConn=null;hd={};
+ const fail=m=>{draft.err=m;room=null;code="";host=true;render()};
+ peer=h?new Peer("tycoon-"+c):new Peer();
+ peer.on("error",e=>fail(e.type==="peer-unavailable"?"Room not found. Check the code and try again.":e.type==="unavailable-id"?"That room code is taken. Try again.":"Connection problem ("+(e.type||"unknown")+"). Try again."));
+ const ready=()=>{room=rm;code=c;host=h;rm.on("state",m=>{if(m.isMe)return;S=m.data;render()});rm.on("join",m=>{if(!host||S.phase!=="lobby")return;S.players.push(m.data);sync()});render()};
+ if(h){peer.on("open",()=>{ready();sync()});
+  peer.on("connection",cn=>{cn.on("open",()=>{conns.push(cn);cn.send({t:"state",d:S})});cn.on("data",m=>m&&m.t==="hello"?cn.send({t:"state",d:S}):got(m,cn));cn.on("close",()=>{conns=conns.filter(x=>x!==cn)})})}
+ else peer.on("open",()=>{const cn=peer.connect("tycoon-"+c,{reliable:true});hostConn=cn;cn.on("open",()=>{ready();cn.send({t:"hello"})});cn.on("data",m=>got(m,cn));cn.on("close",()=>fail("The host left the game."))})}
+function hostRoom(){conn(Math.random().toString(36).slice(2,7),true)}
+function joinRoom(){const c=$("cd").value.trim().toLowerCase();if(c)conn(c,false)}
+if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+render();
+</script></body></html>
