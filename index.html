@@ -122,6 +122,26 @@ input{-webkit-user-select:text;user-select:text}button,input{touch-action:manipu
  #app[data-g="1"] #stage{grid-row:1 / span 3;--s:min(62vh,40vw,620px)}
  #app[data-g="1"] #hud,#app[data-g="1"] #pls{grid-column:2}
 }
+
+#stage .bg{position:absolute;inset:0;border-radius:26px;overflow:hidden;z-index:0;background:linear-gradient(180deg,#4b2a8a 0%,#b5539c 38%,#ff8a7a 66%,#ffc36b 100%);box-shadow:inset 0 0 0 3px #fff4}
+#stage .bg .sun{position:absolute;right:14%;top:46%;width:16%;aspect-ratio:1;border-radius:50%;background:radial-gradient(#fff6c8,#ffd36b 60%,#ffb347);box-shadow:0 0 40px 14px #ffd36b88}
+.cl{position:absolute;left:-20%;font-style:normal;opacity:.85;animation:drift linear infinite;filter:drop-shadow(0 2px 2px #0002)}
+@keyframes drift{to{transform:translateX(150vw)}}
+.st{position:absolute;font-style:normal;font-size:9px;color:#fff;animation:tw 3s ease-in-out infinite}
+.hill{position:absolute;left:-10%;right:-10%;bottom:-18%;height:34%;border-radius:50%;background:#2b6a4f;box-shadow:inset 0 6px 0 #3f8f68}
+#iso::before{content:"";position:absolute;inset:-4%;border-radius:22px;background:#3fa35b;transform:translateZ(-6px);box-shadow:5px 5px 0 #2d7a43,10px 10px 0 #25663a,15px 15px 0 #1e5530}
+#iso::after{content:"";position:absolute;inset:-2%;border-radius:30px;transform:translateZ(-30px);background:#0006;filter:blur(16px)}
+.tl{background:linear-gradient(160deg,#fff7,#fff0 45%),linear-gradient(135deg,color-mix(in srgb,var(--c) 65%,#fff),var(--c));box-shadow:inset 0 2px 0 #fff7,inset 0 -3px 0 #0002,2px 2px 0 #0004,4px 4px 0 #0003,6px 6px 0 #0002}
+#t0{--c:#5fd47e!important}#t8{--c:#f5a623!important}#t16{--c:#5cb8f0!important}#t24{--c:#ff6b6b!important}
+#t0 u.i,#t8 u.i,#t16 u.i,#t24 u.i{font-size:24px}
+.ctr::before{content:"TYCOON TOWN";position:absolute;left:0;right:0;top:42%;text-align:center;font-weight:800;letter-spacing:3px;font-size:13px;color:#ffffffd0;text-shadow:0 2px 0 #0003}
+.ctr::after{content:"";position:absolute;left:58%;top:60%;width:28%;height:20%;border-radius:50%;background:radial-gradient(#b6ecff,#3aa0e8);box-shadow:0 0 0 4px #7bd88f}
+.tk::before{content:"";position:absolute;left:-14px;top:-14px;width:28px;height:28px;border-radius:50%;background:var(--pc);box-shadow:0 0 0 3px #fffc,0 4px 8px #0006;opacity:.9}
+.tk.act::before{animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.35);box-shadow:0 0 0 3px #fff,0 0 16px 6px var(--pc)}}
+@media(prefers-reduced-motion:reduce){.cl,.st,.tk.act::before{animation:none}}
+.zb{align-items:flex-end}.zb button{padding:5px 9px;font-size:13px}
+#stage{height:calc(var(--s)*1.1)}
 </style></head><body>
 <h1>🎲 Tycoon Town</h1>
 <div id="app"></div>
@@ -133,7 +153,7 @@ const GI={1:0,2:0,6:1,7:1,9:2,11:2,13:3,14:3,17:4,18:4,21:5,22:5,25:6,26:6,30:7,
 const RR={4:"Red Line",12:"Blue Line",20:"Green Line",28:"Gold Line"},UT={10:["Electric Co.","💡"],23:["Water Works","🚰"]},TX={5:["Income Tax",200],29:["Luxury Tax",100]},CC={3:1,19:1},NT=32;
 const T=[];for(let i=0;i<NT;i++){const g=GI[i];T.push(g!==undefined?{t:"prop",g,c:G[g][1],p:G[g][2],n:N[i]}:RR[i]?{t:"rr",p:200,n:RR[i],c:"#9fb3c8",ic:"🚂"}:UT[i]?{t:"ut",p:150,n:UT[i][0],c:"#b8c4d6",ic:UT[i][1]}:TX[i]?{t:"tax",n:TX[i][0],a:TX[i][1]}:CC[i]?{t:"cc"}:{t:{0:"go",8:"jail",16:"park",24:"gtj"}[i]||"chance"})}
 const IC={go:"🏁",jail:"🚧",park:"🅿️",gtj:"👮",chance:"❓",rr:"🚂",ut:"💡",tax:"💰",cc:'<svg viewBox="0 0 24 24" width="19" height="19"><path d="M3 11a9 9 0 0 1 18 0v2H3z" fill="#a0642d"/><rect x="3" y="12" width="18" height="9" rx="1.5" fill="#7a4a1e"/><rect x="6" y="4" width="1.8" height="17" fill="#f5c542"/><rect x="16.2" y="4" width="1.8" height="17" fill="#f5c542"/><rect x="3" y="11" width="18" height="2.4" fill="#f5c542"/><rect x="10.2" y="10" width="3.6" height="6" rx=".8" fill="#ffd966" stroke="#8a5a00" stroke-width=".6"/><circle cx="12" cy="13" r=".9" fill="#5a3b00"/></svg>'};
-const TOK=["🐶","🐱","🦖","🚀","🦄","🐸"];
+const TOK=["🐶","🐱","🦖","🚀","🦄","🐸","🐼","🦊","🐯","🦁","🐵","🐧","🐙","🦋","🐢","🐬","🦈","🐲","👸","🧙","🚗","✈️","🛸","🧁"];
 const pos=i=>i<=8?[8,8-i]:i<=16?[16-i,0]:i<=24?[0,i-16]:[i-24,8];
 const myId=Math.random().toString(36).slice(2,8);
 let S={players:[],own:{},h:{},mg:{},tr:null,turn:0,phase:"menu",log:"Welcome!",dice:[0,0],win:null},room=null,host=true,code="",draft={e:TOK[0],mode:"kid",name:""};
@@ -183,14 +203,17 @@ function render(){const a=$("app");document.querySelector("h1").style.display=S.
  if(code)h+=`<div class="card"><small>Room code: <b>${code}</b></small></div>`;
  a.innerHTML=h;cpu()}
 const OC=["#e03a3a","#2a4fc4","#2e9e4f","#f59a23","#a040d0","#444"];
-function skel(){let b='<div id="stage"><button class="xb" onclick="askQuit()">🏠 Exit</button><div class="zb"><button onclick="zoom(.5)">🔍+</button><button onclick="zoom(-.5)">🔍−</button><button onclick="draft.px=draft.py=0;cam()">🎯</button><button id="mb" onclick="tmute()">${mute?"🔇":"🔊"}</button></div><div id="iso"><div class="ctr">'+["🌳|10|30","🏢|62|28","⛲|34|62","🏙️|70|80","🌲|14|88"].map(s=>{const[e,x,y]=s.split("|");return`<i style="left:${x}%;top:${y}%">${e}</i>`}).join("")+'</div>';
+function bgx(){const cl=[["8%",12,46,0],["55%",6,60,-20],["30%",22,52,-35],["78%",30,38,-8]].map(c=>`<i class="cl" style="top:${c[1]}%;font-size:${c[2]}px;animation-duration:${c[2]*1.2+30}s;animation-delay:${c[3]}s">☁️</i>`).join("");
+ const st=[...Array(14)].map((_,k)=>`<i class="st" style="left:${(k*37+11)%96}%;top:${(k*23+5)%40}%;animation-delay:${k*.4}s">✦</i>`).join("");
+ return`<div class="sun"></div>${st}${cl}<div class="hill"></div>${sky()}`}
+function skel(){let b='<div id="stage"><div class="bg">'+bgx()+'</div><button class="xb" onclick="askQuit()">🏠 Exit</button><div class="zb"><button onclick="zoom(.5)">🔍+</button><button onclick="zoom(-.5)">🔍−</button><button onclick="draft.px=draft.py=0;cam()">🎯</button><button id="mb" onclick="tmute()">'+(mute?"🔇":"🔊")+'</button></div><div id="iso"><div class="ctr">'+["🌳|10|30","🏢|62|26","⛲|32|58","🏙️|44|34","🌲|14|88","🌴|86|30","🏠|16|60","🦆|70|74","🌷|46|88","🌳|90|92"].map(s=>{const[e,x,y]=s.split("|");return`<i style="left:${x}%;top:${y}%">${e}</i>`}).join("")+'</div>';
  for(let i=0;i<NT;i++){const [r,c]=pos(i),t=T[i];b+=`<div id="t${i}" class="tl" style="left:${c*100/9}%;top:${r*100/9}%;--c:${t.c||"#f4e7c5"}"><u class="${t.t==="prop"?"":"i"}">${t.t==="prop"?"":t.ic||IC[t.t]}</u></div>`}
- S.players.forEach((q,k)=>{b+=`<div id="k${k}" class="tk" style="--k:${k}"><span><b>${q.e}</b></span></div>`});
+ S.players.forEach((q,k)=>{b+=`<div id="k${k}" class="tk" style="--k:${k};--pc:${OC[k%6]}"><span><b style="filter:${hf(k)}">${q.e}</b></span></div>`});
  return b+'</div></div><div id="hud" class="card"></div><div id="pls"></div>'}
 function hud(){const p=cur(),[d1,d2]=S.dice,F="⚀⚁⚂⚃⚄⚅";
  if(S.win)return`<div class="big" style="font-size:44px">🏆</div><b>${esc(S.win)} wins!</b><div><button class="good" onclick="replay()">🔁 Play again</button><button class="alt" onclick="toMenu()">🏠 Menu</button></div>`;
- return`<div class="hrow"><span class="big">${p.e}</span><span style="flex:1"><b>${esc(p.n)}</b><br><small>${fm(p,p.m)}${p.jail?" · timeout":""}</small></span><span class="dice ${S.phase==="rolling"?"sh":""}">${S.phase==="rolling"?"🎲🎲":d1?F[d1-1]+F[d2-1]:""}</span></div><small>${esc(S.log)}</small>${trbox()}${aubox()}<div>${S.tr||S.au?"":mine()?btns()+'<div class="mrow">'+bld()+mng()+trd()+'</div>':`<small>${esc(p.n)} is playing…</small>`}</div>`}
-function plist(){return'<div class="card">'+S.players.map((q,k)=>`<div class="pl ${q.by===myId?"me":""}"><span>${q.e} ${esc(q.n)} ${q.mode==="kid"?"🧒":"🎩"}${q.goj?" 🎟️"+q.goj:""}${q.out?" ❌":""}${k===S.turn?" ◀":""}</span><span>${fm(q,q.m)}</span></div>`).join("")+"</div>"+(code?`<div class="card"><small>Room code: <b>${code.toUpperCase()}</b></small></div>`:"")}
+ return`<div class="hrow"><span class="big"><i style="font-style:normal;filter:${hf(S.turn)}">${p.e}</i></span><span style="flex:1"><b>${esc(p.n)}</b><br><small>${fm(p,p.m)}${p.jail?" · timeout":""}</small></span><span class="dice ${S.phase==="rolling"?"sh":""}">${S.phase==="rolling"?"🎲🎲":d1?F[d1-1]+F[d2-1]:""}</span></div><small>${esc(S.log)}</small>${trbox()}${aubox()}<div>${S.tr||S.au?"":mine()?btns()+'<div class="mrow">'+bld()+mng()+trd()+'</div>':`<small>${esc(p.n)} is playing…</small>`}</div>`}
+function plist(){return'<div class="card">'+S.players.map((q,k)=>`<div class="pl ${q.by===myId?"me":""}"><span><i style="font-style:normal;filter:${hf(k)}">${q.e}</i> ${esc(q.n)} ${q.mode==="kid"?"🧒":"🎩"}${q.goj?" 🎟️"+q.goj:""}${q.out?" ❌":""}${k===S.turn?" ◀":""}</span><span>${fm(q,q.m)}</span></div>`).join("")+"</div>"+(code?`<div class="card"><small>Room code: <b>${code.toUpperCase()}</b></small></div>`:"")}
 let pdr=null;
 function pinit(st){st.addEventListener("pointerdown",e=>{if((draft.z||1)>1&&!e.target.closest(".zb")){pdr={x:e.clientX-(draft.px||0),y:e.clientY-(draft.py||0)};st.setPointerCapture(e.pointerId)}});
  st.addEventListener("pointermove",e=>{if(pdr){draft.px=e.clientX-pdr.x;draft.py=e.clientY-pdr.y;cam(1)}});
@@ -201,7 +224,7 @@ function cam(d){const z=draft.z||1,i=$("iso"),st=$("stage");if(!i)return;let tx=
 function game(a){if(draft.z===undefined){try{draft.z=+localStorage.getItem("ttz")||1}catch(e){draft.z=1}}if(!a.dataset.g){a.dataset.g="1";a.innerHTML=skel();pinit($("stage"))}
  const p=cur();
  for(let i=0;i<NT;i++){const el=$("t"+i),o=S.own[i];el.style.opacity=S.mg[i]?.45:1;el.style.outline=o!==undefined?`4px solid ${OC[o]}`:"";if(T[i].p){const u=el.firstChild,h=S.h[i]||0,pr=T[i].t==="prop";u.className=h||!pr?"i":"";u.textContent=!pr?T[i].ic:h===5?"🏨":h?"🏠"+h:""}}
- S.players.forEach((q,k)=>{const el=$("k"+k);if(!el)return;const [r,c]=pos(q.pos);el.style.left=(c+.5)*100/9+"%";el.style.top=(r+.5)*100/9+"%";el.style.display=q.out?"none":"";el.firstChild.firstChild.className=S.phase==="moving"&&k===S.turn?"hp":""});
+ S.players.forEach((q,k)=>{const el=$("k"+k);if(!el)return;const [r,c]=pos(q.pos);el.style.left=(c+.5)*100/9+"%";el.style.top=(r+.5)*100/9+"%";el.style.display=q.out?"none":"";el.classList.toggle("act",k===S.turn&&!S.win);el.firstChild.firstChild.className=S.phase==="moving"&&k===S.turn?"hp":""});
  $("hud").innerHTML=hud();$("pls").innerHTML=plist();cam();cpu();cpuTr();cpuAu();sfx()}
 function btns(){const p=cur();if(S.phase==="rolling"||S.phase==="moving")return"";if(S.phase==="debt")return'<small>You owe money! Sell or mortgage:</small><button class="alt" onclick="giveUp()">🏳️ Give up</button>';if(S.phase==="roll")return'<button onclick="roll()">🎲 Roll!</button>'+(p.jail&&p.m>=50?'<button class="alt" onclick="payOut()">💸 Pay '+fm(p,50)+' to leave timeout</button>':"")+(p.jail&&p.goj?'<button class="good" onclick="useCard()">🎟️ Use free card</button>':"");
  if(S.phase==="buy"){const c=T[p.pos].p,ok=p.m>=c;return`<button class="${ok?"":"off"}" onclick="buy()">${p.mode==="kid"?"Take it!":"Buy "+fm(p,c)}</button>`+(p.mode==="kid"?"":'<button class="alt" onclick="skip()">Skip</button>')}
@@ -231,6 +254,7 @@ function fx(p,c){const st=$("stage");if(!st)return;const sr=st.getBoundingClient
  if(c.w&&!p.w)confetti()}
 function confetti(){const e=["🎉","🎊","⭐","🪙","✨","🏆"];for(let k=0;k<36;k++){const s=document.createElement("span");s.className="cf";s.textContent=e[k%6];s.style.left=Math.random()*100+"vw";s.style.animationDelay=Math.random()*1.2+"s";s.style.fontSize=18+Math.random()*20+"px";document.body.appendChild(s);setTimeout(()=>s.remove(),4500)}}
 function replay(){S.players.forEach(q=>{q.m=q.mode==="kid"?1000:1500;q.pos=0;q.jail=0;q.goj=0;q.out=false});S.own={};S.h={};S.mg={};S.tr=null;S.au=null;S.turn=0;S.phase="roll";S.dice=[0,0];S.dbl=false;S.dc=0;S.win=null;log("New game! Good luck!");sync()}
+function hf(k){const e=S.players[k].e;let n=0;for(let j=0;j<k;j++)if(S.players[j].e===e)n++;return n?`hue-rotate(${[0,140,200,260,320,60][n%6]}deg) saturate(1.3)`:"none"}
 function useCard(){const p=cur();if(!p.goj)return;p.goj--;p.jail=0;log(p.n+" used a Get Out of Timeout Free card!");sync()}
 function askQuit(){if($("qo"))return;const o=document.createElement("div");o.id="qo";o.className="ovl";o.innerHTML='<div class="card"><b style="font-size:20px">Quit to the main menu?</b><p>Your game is saved on this device, so you can continue it later.</p><button class="good" onclick="qo(0)">▶ Keep playing</button><button onclick="qo(1)">🏠 Quit</button></div>';document.body.appendChild(o)}
 function qo(q){const o=$("qo");if(o)o.remove();if(q)toMenu()}
@@ -299,8 +323,8 @@ function menu(a){a.innerHTML=`<div class="menu">${fl}${sky()}<div class="logo">�
 function rmP(i){S.players.splice(i,1);sync()}
 function lobby(a){const ok=S.players.length>1;
  a.innerHTML=`${room?"":`<button class="x" onclick="S.phase='menu';render()">← Menu</button>`}<p class="sub">Set up your game</p>
- <div class="card"><h2>1 · Players</h2>${S.players.map((p,i)=>`<div class="pc"><span class="pe">${p.e}</span><span class="pn">${esc(p.n)}<small>${p.mode==="kid"?"🧒 Little kid":"🎩 Classic"}${p.cpu?" · CPU":p.by===myId?"":" · online"}</small></span>${host?`<button class="x" onclick="rmP(${i})">✕</button>`:""}</div>`).join("")||"<small>No players yet. Add some below.</small>"}</div>
- <div class="card"><h2>2 · Add a player</h2><input value="${esc(draft.name)}" oninput="draft.name=this.value" placeholder="Name" maxlength="12">
+ <div class="card"><h2>1 · Players</h2>${S.players.map((p,i)=>`<div class="pc"><span class="pe" style="filter:${hf(i)}">${p.e}</span><span class="pn">${esc(p.n)}<small>${p.mode==="kid"?"🧒 Little kid":"🎩 Classic"}${p.cpu?" · CPU":p.by===myId?"":" · online"}</small></span>${host?`<button class="x" onclick="rmP(${i})">✕</button>`:""}</div>`).join("")||"<small>No players yet. Add some below.</small>"}</div>
+ <div class="card"><h2>2 · Add a player <small>(same pick twice gets a new color)</small></h2><input value="${esc(draft.name)}" oninput="draft.name=this.value" placeholder="Name" maxlength="12">
  <div class="tr">${TOK.map(t=>`<button class="${draft.e===t?"on":""}" onclick="pick('e','${t}')">${t}</button>`).join("")}</div>
  <div class="seg"><button class="${draft.mode==="kid"?"on":""}" onclick="pick('mode','kid')"><b>🧒 Little kid</b><small>Coins, easy rent, never goes broke</small></button><button class="${draft.mode==="big"?"on":""}" onclick="pick('mode','big')"><b>🎩 Classic</b><small>Real money and bankruptcy</small></button></div>
  <div class="two"><button onclick="addP()">➕ Add player</button><button class="alt" onclick="addCPU()">🤖 Add CPU</button></div></div>
